@@ -24,7 +24,10 @@
             display: flex;
             min-height: 100vh;
         }
-        /* Sidebar Controls */
+
+        /* ====================
+           左側控制面板 (Sidebar)
+           ==================== */
         .controls-pane {
             width: 450px;
             background: #ffffff;
@@ -165,7 +168,9 @@
             height: 16px;
         }
 
-        /* Preview Pane */
+        /* ====================
+           右側預覽區 (Preview Pane)
+           ==================== */
         .preview-pane {
             margin-left: 450px;
             flex: 1;
@@ -184,6 +189,8 @@
             gap: 10px;
             flex-wrap: wrap;
         }
+
+        /* 報價單卡片預設（電腦端 A4 規格） */
         .invoice-card {
             background: var(--card-bg);
             width: 210mm;
@@ -197,7 +204,7 @@
             justify-content: space-between;
         }
 
-        /* Invoice Internal Layout */
+        /* 報價單內部元素 */
         .inv-header {
             display: flex;
             justify-content: space-between;
@@ -377,12 +384,14 @@
         }
 
         /* =========================================================
-           📱 Mobile Responsive Styles (Android & iOS Devices)
+           📱 全面響應式設計 (RWD Media Query) - 控制面板 & 預覽區
            ========================================================= */
         @media screen and (max-width: 900px) {
             body {
                 flex-direction: column;
             }
+            
+            /* 1. 左側控制面板 RWD */
             .controls-pane {
                 width: 100%;
                 height: auto;
@@ -394,32 +403,122 @@
                 box-shadow: none;
                 padding: 15px;
             }
+
+            /* 2. 右側預覽區外層 RWD */
             .preview-pane {
                 margin-left: 0;
                 width: 100%;
-                padding: 20px 10px;
-                overflow-x: auto;
-                align-items: flex-start;
+                padding: 15px 10px;
+                overflow-x: hidden;
+                align-items: center;
             }
             .action-bar {
                 width: 100%;
                 justify-content: center;
                 margin-bottom: 12px;
             }
-            .action-bar .btn {
-                font-size: 0.85rem;
-            }
+
+            /* 3. 報價單預覽卡片 RWD (自適應手機螢幕) */
             .invoice-card {
-                min-width: 680px; 
-                margin: 0 auto;
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                min-height: auto;
+                padding: 18px 12px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            }
+
+            /* 4. 報價單標頭 RWD */
+            .inv-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .inv-title-area {
+                text-align: left;
+            }
+            .inv-title-area h1 {
+                font-size: 1.5rem;
+            }
+
+            /* 5. 客戶資料與 QR Code 區塊 RWD */
+            .parties-and-qr-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .qr-codes-area {
+                align-items: flex-start;
+                margin-left: 0;
+                width: 100%;
+            }
+            .qr-images {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .qr-images img {
+                height: 55px; /* 手機適度縮小 QR Code */
+            }
+
+            /* 6. 表格 RWD 最佳化 */
+            .inv-table th, .inv-table td {
+                padding: 6px 4px;
+                font-size: 0.8rem;
+            }
+
+            /* 7. 結算總計區塊 RWD */
+            .summary-table {
+                width: 100%;
+            }
+
+            /* 8. 注意事項 RWD */
+            .notice-body {
+                font-size: 0.8rem;
             }
         }
 
+        /* =========================================================
+           🖨️ PDF 列印與輸出 (強制維持標準 A4 格式)
+           ========================================================= */
         @media print {
-            body { background: none; }
-            .controls-pane, .action-bar { display: none; }
-            .preview-pane { margin: 0; padding: 0; overflow: visible; }
-            .invoice-card { box-shadow: none; width: 100%; min-width: auto; padding: 10mm; min-height: auto; }
+            body { 
+                background: none; 
+                display: block; 
+            }
+            .controls-pane, .action-bar { 
+                display: none !important; 
+            }
+            .preview-pane { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                width: 100% !important; 
+                overflow: visible !important; 
+            }
+            .invoice-card { 
+                box-shadow: none !important; 
+                width: 210mm !important; 
+                min-width: 210mm !important;
+                min-height: 297mm !important; 
+                padding: 15mm 20mm !important; 
+                margin: 0 auto !important;
+            }
+            .inv-header { 
+                flex-direction: row !important; 
+            }
+            .inv-title-area { 
+                text-align: right !important; 
+            }
+            .parties-and-qr-container { 
+                flex-direction: row !important; 
+            }
+            .qr-codes-area { 
+                align-items: flex-end !important; 
+                margin-left: 15px !important; 
+            }
+            .qr-images img { 
+                height: 75px !important; 
+            }
+            .summary-table { 
+                width: 320px !important; 
+            }
         }
     </style>
 </head>
