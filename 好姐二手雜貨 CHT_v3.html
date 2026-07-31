@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好姐二手雜貨 - 專業報價單生成器</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --accent-color: #333333;
+            --border-color: #cccccc;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #333333;
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Controls */
+        .controls-pane {
+            width: 450px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+        .controls-pane h2 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #555;
+        }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .item-row-edit {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            padding: 35px 10px 10px 10px; /* 增加上方 padding 給按鈕空間 */
+            border-radius: 6px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        /* 操作按鈕群組 (上下移、刪除) */
+        .action-buttons {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 5px;
+        }
+        .btn-icon {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-icon:hover {
+            opacity: 0.85;
+        }
+        .btn-icon.delete {
+            background-color: #c0392b;
+        }
+
+        .btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .btn:hover {
+            opacity: 0.85;
+        }
+        .btn-secondary {
+            background-color: #7f8c8d;
+            margin-top: 8px;
+        }
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            width: auto;
+            margin-top: 0;
+            background-color: #2980b9;
+        }
+
+        .rate-display {
+            font-size: 0.8rem;
+            color: #666;
+            display: block;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 8px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            margin: 0 !important;
+        }
+        .checkbox-label input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Preview Pane */
+        .preview-pane {
+            margin-left: 450px;
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+        .action-bar {
+            width: 210mm;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        .invoice-card {
+            background: var(--card-bg);
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm 20mm;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Invoice Internal Layout */
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        .inv-logo-area h2 {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 4px;
+            border: none;
+            padding: 0;
+        }
+        .inv-logo-area p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+        .inv-title-area {
+            text-align: right;
+        }
+        .inv-title-area h1 {
+            font-size: 1.8rem;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .inv-title-area p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .inv-parties {
+            margin-bottom: 25px;
+        }
+        .inv-parties h3 {
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        .inv-parties p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            color: #333;
+        }
+
+        .inv-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .inv-table th, .inv-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .inv-table th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+        }
+        .inv-table td.numeric, .inv-table th.numeric {
+            text-align: right;
+        }
+        .inv-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 25px;
+        }
+        .summary-table {
+            width: 280px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .summary-row.converted {
+            color: #666;
+            font-size: 0.85rem;
+            border-bottom: none;
+            padding-top: 2px;
+        }
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 1.05rem;
+            border-top: 2px solid #333;
+            border-bottom: 2px solid #333;
+            color: #333;
+            margin-top: 4px;
+            padding: 8px 0;
+        }
+        .summary-row.extra-total {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #333;
+            border-bottom: none;
+            padding: 4px 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+        
+        .rate-note {
+            font-size: 0.75rem;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .notice-section {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+        .notice-header {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .notice-subheader {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .notice-body {
+            font-size: 0.85rem;
+            color: #333;
+            line-height: 1.5;
+        }
+        .notice-item {
+            margin-bottom: 6px;
+        }
+
+        @media print {
+            body { background: none; }
+            .controls-pane, .action-bar { display: none; }
+            .preview-pane { margin: 0; padding: 0; }
+            .invoice-card { box-shadow: none; width: 100%; padding: 10mm; min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 左側控制面板 -->
+    <div class="controls-pane">
+        <h2>
+            報價單設定
+            <button class="btn btn-small" onclick="fetchExchangeRates()" id="btn-update-rates">更新匯率</button>
+        </h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>單號 (Invoice #)</label>
+                <input type="text" id="inp-inv-no" oninput="updateInvoice()">
+            </div>
+            <div class="form-group">
+                <label>主要貨幣 (基礎定價)</label>
+                <select id="inp-base-currency" onchange="updateInvoice()">
+                    <option value="MOP" selected>MOP (澳門元)</option>
+                    <option value="HKD">HKD (港元)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>報價單顯示貨幣</label>
+            <select id="inp-display-currency" onchange="updateInvoice()">
+                <option value="MOP" selected>MOP</option>
+                <option value="HKD">HKD</option>
+                <option value="CNY">RMB (人民幣)</option>
+            </select>
+            
+            <div class="checkbox-group">
+                <span class="rate-display" id="rate-info-text">匯率載入中...</span>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-show-rmb" onchange="updateInvoice()"> 顯示付 RMB
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-show-hkd" onchange="updateInvoice()"> 顯示付 HKD
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>報價日期 (Date)</label>
+            <input type="date" id="inp-date" onchange="updateInvoice()">
+        </div>
+
+        <h2>公司資料 (好姐二手雜貨)</h2>
+        <div class="form-group">
+            <label>公司名稱</label>
+            <input type="text" id="inp-company-name" value="好姐二手雜貨" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+            <label>詳細地址與聯絡方式</label>
+            <textarea id="inp-company-details" rows="3" oninput="updateInvoice()">地址：大纜巷 47 - 47A 地舖
+Address : Travessa da Corda 47 -47A
+電話: +853 1234 5678
+電郵: info@haojieshop.com</textarea>
+        </div>
+
+        <h2>客戶聯絡資料</h2>
+        <div class="form-group">
+            <label>客戶姓名 / 稱呼</label>
+            <input type="text" id="inp-client-name" value="姓名: 張先生 / 陳小姐" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+            <label>電話</label>
+            <input type="text" id="inp-client-phone" value="電話: +853 8765 4321" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+            <label>送貨地址</label>
+            <textarea id="inp-client-address" rows="2" oninput="updateInvoice()">送貨地址: 澳門路環某大廈某單位</textarea>
+        </div>
+
+        <h2>報價項目 (Items) <span style="font-size: 0.8rem; font-weight: normal;">(輸入金額為主要貨幣)</span></h2>
+        <div id="items-container">
+            <!-- 項目將由 JS 動態生成 -->
+        </div>
+        <button class="btn btn-secondary" onclick="addItem()">+ 新增項目</button>
+    </div>
+
+    <!-- 右側預覽與列印面版 -->
+    <div class="preview-pane">
+        <div class="action-bar">
+            <button class="btn" style="width: auto;" onclick="window.print()">列印 / 儲存為 PDF</button>
+        </div>
+
+        <div class="invoice-card" id="invoice-preview">
+            <div>
+                <div class="inv-header">
+                    <div class="inv-logo-area">
+                        <h2 id="prev-company-name">好姐二手雜貨</h2>
+                        <p id="prev-company-details">地址：大纜巷 47 - 47A 地舖
+Address : Travessa da Corda 47 -47A
+電話: +853 1234 5678
+電郵: info@haojieshop.com</p>
+                    </div>
+                    <div class="inv-title-area">
+                        <h1>報價單</h1>
+                        <p id="prev-inv-no"># 20260724</p>
+                        <p>日期: <span id="prev-date">2026-07-24</span></p>
+                    </div>
+                </div>
+
+                <!-- 客戶聯絡資料 -->
+                <div class="inv-parties">
+                    <h3>客戶聯絡資料</h3>
+                    <p id="prev-client-line1">姓名: 張先生 / 陳小姐</p>
+                    <p id="prev-client-line2">電話: +853 8765 4321</p>
+                    <p id="prev-client-line3">送貨地址: 澳門路環某大廈某單位</p>
+                </div>
+
+                <table class="inv-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 45%;">項目描述 (Description)</th>
+                            <th style="width: 15%;" class="numeric">數量 (Qty)</th>
+                            <th style="width: 20%;" class="numeric">單價 (Price)</th>
+                            <th style="width: 20%;" class="numeric">金額 (Amount)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prev-items-body">
+                        <!-- 動態填充 -->
+                    </tbody>
+                </table>
+
+                <div class="inv-summary">
+                    <div class="summary-table">
+                        <div class="summary-row">
+                            <span>小計 (Subtotal):</span>
+                            <span id="prev-subtotal">MOP 0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>總計 (Total):</span>
+                            <span id="prev-total">MOP 0.00</span>
+                        </div>
+                        
+                        <!-- 原有基礎貨幣折合提示 -->
+                        <div class="summary-row converted" id="prev-converted-total" style="display: none;">
+                            <span>折合約:</span>
+                            <span id="prev-converted-amount"></span>
+                        </div>
+                        
+                        <!-- 新增：Checkbox 觸發的額外幣值總數 -->
+                        <div class="summary-row extra-total" id="prev-extra-rmb" style="display: none;">
+                            <span>折合約 RMB 總數:</span>
+                            <span id="prev-extra-rmb-amount">RMB 0.00</span>
+                        </div>
+                        <div class="summary-row extra-total" id="prev-extra-hkd" style="display: none;">
+                            <span>折合約 HKD 總數:</span>
+                            <span id="prev-extra-hkd-amount">HKD 0.00</span>
+                        </div>
+
+                        <div class="rate-note" id="prev-rate-note" style="display: none;">
+                            *按即時匯率計算
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下單及送貨重要須知 -->
+            <div class="notice-section">
+                <div class="notice-header">下單及送貨重要須知</div>
+                <div class="notice-subheader">感謝閣下對本店的支持。為確保送貨流程順暢，請各位顧客於下單後留意以下送貨條款：</div>
+                <div class="notice-body">
+                    <div class="notice-item">1. <strong>物業准入：</strong>如送貨後，因大廈管理處拒絕家俬進入或貨車無法進入停車場，本店恕不接受退貨或退款。</div>
+                    <div class="notice-item">2. <strong>租務限制：</strong>如因地產中介租屋條款限制，或任何個人租約原因導致未能收貨，本店恕不接受退貨或退款。</div>
+                    <div class="notice-item">3. <strong>無人收貨：</strong>本店將按約定時間送貨。若屆時住戶不在指定地址或無人接收貨物，本店恕不接受退貨或退款。</div>
+                    <div class="notice-item">4. <strong>物流成本：</strong>有關訂單內床架或家電之運送費及工人搬運費，一旦安排送貨後，相關費用恕不退還。</div>
+                    <div class="notice-item">5. <strong>最終銷售：</strong>貨物一經出售或貨車送出，本店概不接受退貨或退款申請。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let exchangeRates = {
+            MOP: { HKD: 0.97, CNY: 0.89 }, 
+            HKD: { MOP: 1.03, CNY: 0.92 }
+        };
+        let lastUpdateTime = "使用預設匯率";
+
+        let items = [
+            { desc: '全新床褥 - 20CM厚 (1.5M x 1.9M)', qty: 1, price: 800, type: 'normal' },
+            { desc: '上樓安裝服務 (有電梯)', qty: 1, price: 100, type: 'normal' },
+            { desc: '送貨服務', qty: 1, price: 250, type: 'delivery', location: '路環' }
+        ];
+
+        // 獲取即時匯率
+        async function fetchExchangeRates() {
+            const btn = document.getElementById('btn-update-rates');
+            const infoText = document.getElementById('rate-info-text');
+            btn.innerText = '更新中...';
+            btn.disabled = true;
+
+            try {
+                const responseMOP = await fetch('https://open.er-api.com/v6/latest/MOP');
+                const dataMOP = await responseMOP.json();
+                
+                if (dataMOP.result === 'success') {
+                    exchangeRates.MOP.HKD = dataMOP.rates.HKD;
+                    exchangeRates.MOP.CNY = dataMOP.rates.CNY;
+                    
+                    const responseHKD = await fetch('https://open.er-api.com/v6/latest/HKD');
+                    const dataHKD = await responseHKD.json();
+                    if(dataHKD.result === 'success') {
+                        exchangeRates.HKD.MOP = dataHKD.rates.MOP;
+                        exchangeRates.HKD.CNY = dataHKD.rates.CNY;
+                    }
+
+                    const now = new Date();
+                    lastUpdateTime = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    console.log("匯率更新成功:", exchangeRates);
+                } else {
+                    console.error("API 請求失敗，使用預設匯率");
+                }
+            } catch (error) {
+                console.error("獲取匯率發生錯誤:", error);
+                infoText.innerText = '目前顯示:';
+            } finally {
+                btn.innerText = '更新匯率';
+                btn.disabled = false;
+                updateInvoice(); 
+            }
+        }
+
+        function getRate(base, target) {
+            if (base === target) return 1;
+            return exchangeRates[base][target] || 1;
+        }
+
+        function initItemsEditor() {
+            const container = document.getElementById('items-container');
+            const baseCurrency = document.getElementById('inp-base-currency').value;
+            container.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'item-row-edit';
+                
+                let isDelivery = item.type === 'delivery';
+
+                // 新增右上角操作按鈕群 (上移、下移、刪除)
+                div.innerHTML = `
+                    <div class="action-buttons">
+                        ${index > 0 ? `<button class="btn-icon" onclick="moveItem(${index}, -1)" title="向上移動">⬆</button>` : ''}
+                        ${index < items.length - 1 ? `<button class="btn-icon" onclick="moveItem(${index}, 1)" title="向下移動">⬇</button>` : ''}
+                        ${items.length > 1 ? `<button class="btn-icon delete" onclick="removeItem(${index})">刪除</button>` : ''}
+                    </div>
+                    <div class="form-group" style="margin-bottom: 6px;">
+                        <label>項目名稱與規格</label>
+                        <input type="text" value="${item.desc}" oninput="updateItem(${index}, 'desc', this.value)">
+                    </div>
+                    ${isDelivery ? `
+                    <div class="form-group" style="margin-bottom: 6px;">
+                        <label>送貨地區選擇</label>
+                        <select onchange="updateDeliveryLocation(${index}, this.value)">
+                            <option value="澳門半島" ${item.location === '澳門半島' ? 'selected' : ''}>澳門半島 (MOP$120)</option>
+                            <option value="氹仔" ${item.location === '氹仔' ? 'selected' : ''}>氹仔 (MOP$190)</option>
+                            <option value="路環" ${item.location === '路環' ? 'selected' : ''}>路環 (MOP$250)</option>
+                        </select>
+                    </div>
+                    ` : ''}
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>數量</label>
+                            <input type="number" value="${item.qty}" min="1" oninput="updateItem(${index}, 'qty', parseFloat(this.value) || 0)">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>單價 (${baseCurrency})</label>
+                            <input type="number" value="${item.price}" min="0" step="1" ${isDelivery ? 'readonly style="background-color:#e9ecef;"' : ''} oninput="updateItem(${index}, 'price', parseFloat(this.value) || 0)">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            updateInvoice();
+        }
+
+        // 調動項目順序功能
+        function moveItem(index, direction) {
+            if (index + direction >= 0 && index + direction < items.length) {
+                let temp = items[index];
+                items[index] = items[index + direction];
+                items[index + direction] = temp;
+                initItemsEditor();
+            }
+        }
+
+        function updateDeliveryLocation(index, location) {
+            items[index].location = location;
+            if (location === '澳門半島') {
+                items[index].price = 120;
+                items[index].desc = '送貨服務 (澳門半島)';
+            } else if (location === '氹仔') {
+                items[index].price = 190;
+                items[index].desc = '送貨服務 (氹仔)';
+            } else if (location === '路環') {
+                items[index].price = 250;
+                items[index].desc = '送貨服務 (路環)';
+            }
+            initItemsEditor();
+        }
+
+        function addItem() {
+            items.push({ desc: '新項目名稱', qty: 1, price: 0, type: 'normal' });
+            initItemsEditor();
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            initItemsEditor();
+        }
+
+        function updateItem(index, field, value) {
+            items[index][field] = value;
+            updateInvoice();
+        }
+
+        function updateInvoice() {
+            const invNo = document.getElementById('inp-inv-no').value;
+            const baseCurrency = document.getElementById('inp-base-currency').value;
+            const displayCurrency = document.getElementById('inp-display-currency').value;
+            const date = document.getElementById('inp-date').value;
+            const companyName = document.getElementById('inp-company-name').value;
+            const companyDetails = document.getElementById('inp-company-details').value;
+            const clientName = document.getElementById('inp-client-name').value;
+            const clientPhone = document.getElementById('inp-client-phone').value;
+            const clientAddress = document.getElementById('inp-client-address').value;
+            
+            // 讀取 Checkbox 狀態
+            const showRMB = document.getElementById('chk-show-rmb').checked;
+            const showHKD = document.getElementById('chk-show-hkd').checked;
+
+            // 計算匯率
+            const rate = getRate(baseCurrency, displayCurrency);
+            
+            // 更新目前顯示文字
+            document.getElementById('rate-info-text').innerText = `目前顯示: ${displayCurrency}`;
+
+            // 如果更換了 Base Currency，重新渲染編輯區以更新 Label
+            const currentItemLabels = document.querySelector('#items-container .form-group label:last-child');
+            if(currentItemLabels && !currentItemLabels.innerText.includes(baseCurrency)) {
+                 initItemsEditor(); 
+                 return; 
+            }
+
+            // 更新預覽文字
+            document.getElementById('prev-inv-no').innerText = '# ' + invNo;
+            document.getElementById('prev-date').innerText = date;
+            document.getElementById('prev-company-name').innerText = companyName;
+            document.getElementById('prev-company-details').innerText = companyDetails;
+            document.getElementById('prev-client-line1').innerText = clientName;
+            document.getElementById('prev-client-line2').innerText = clientPhone;
+            document.getElementById('prev-client-line3').innerText = clientAddress;
+
+            let subtotalBase = 0;
+            let tbody = document.getElementById('prev-items-body');
+            tbody.innerHTML = '';
+
+            let displaySymbol = displayCurrency === 'CNY' ? 'RMB' : displayCurrency;
+
+            // 產生表格內容
+            items.forEach(item => {
+                let amountBase = item.qty * item.price;
+                subtotalBase += amountBase;
+                
+                let displayPrice = item.price * rate;
+                let displayAmount = amountBase * rate;
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.desc}</td>
+                    <td class="numeric">${item.qty}</td>
+                    <td class="numeric">${displaySymbol} ${displayPrice.toFixed(2)}</td>
+                    <td class="numeric">${displaySymbol} ${displayAmount.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // 更新主要總計
+            let totalDisplay = subtotalBase * rate;
+            document.getElementById('prev-subtotal').innerText = displaySymbol + ' ' + totalDisplay.toFixed(2);
+            document.getElementById('prev-total').innerText = displaySymbol + ' ' + totalDisplay.toFixed(2);
+
+            // 處理「原本基礎貨幣」的顯示邏輯 (當顯示貨幣與基礎貨幣不同時)
+            const convertedRow = document.getElementById('prev-converted-total');
+            if (baseCurrency !== displayCurrency) {
+                convertedRow.style.display = 'flex';
+                document.getElementById('prev-converted-amount').innerText = `(${baseCurrency} ${subtotalBase.toFixed(2)})`;
+            } else {
+                convertedRow.style.display = 'none';
+            }
+
+            // 處理「Checkbox 額外顯示幣值」邏輯
+            const extraRmbRow = document.getElementById('prev-extra-rmb');
+            const extraHkdRow = document.getElementById('prev-extra-hkd');
+            
+            if (showRMB) {
+                let rmbRate = getRate(baseCurrency, 'CNY');
+                let rmbTotal = subtotalBase * rmbRate;
+                document.getElementById('prev-extra-rmb-amount').innerText = `RMB ${rmbTotal.toFixed(2)}`;
+                extraRmbRow.style.display = 'flex';
+            } else {
+                extraRmbRow.style.display = 'none';
+            }
+
+            if (showHKD) {
+                let hkdRate = getRate(baseCurrency, 'HKD');
+                let hkdTotal = subtotalBase * hkdRate;
+                document.getElementById('prev-extra-hkd-amount').innerText = `HKD ${hkdTotal.toFixed(2)}`;
+                extraHkdRow.style.display = 'flex';
+            } else {
+                extraHkdRow.style.display = 'none';
+            }
+
+            // 控制底部「*按即時匯率計算」文字是否顯示
+            const rateNote = document.getElementById('prev-rate-note');
+            if (baseCurrency !== displayCurrency || showRMB || showHKD) {
+                rateNote.style.display = 'block';
+            } else {
+                rateNote.style.display = 'none';
+            }
+        }
+
+        window.onload = function() {
+            // 處理日期與單號預設值 (自動抓取當天)
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            
+            // 設定為 YYYYMMDD
+            document.getElementById('inp-inv-no').value = `${yyyy}${mm}${dd}`;
+            // 設定為 YYYY-MM-DD (input type="date" 的標準格式)
+            document.getElementById('inp-date').value = `${yyyy}-${mm}-${dd}`;
+
+            // 頁面載入時自動抓取一次匯率
+            fetchExchangeRates().then(() => {
+                initItemsEditor();
+            });
+        };
+    </script>
+</body>
+</html>
