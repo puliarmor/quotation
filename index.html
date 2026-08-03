@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>好姐二手雜貨 - 專業報價單生成器</title>
+    <title>好姐二手雜貨 - 報價單生成器 (Quotation Generator)</title>
     <style>
         :root {
             --primary-color: #000000;
@@ -190,7 +190,6 @@
             flex-wrap: wrap;
         }
 
-        /* 報價單卡片預設（電腦端 A4 規格） */
         .invoice-card {
             background: var(--card-bg);
             width: 210mm;
@@ -204,7 +203,6 @@
             justify-content: space-between;
         }
 
-        /* 報價單內部元素 */
         .inv-header {
             display: flex;
             justify-content: space-between;
@@ -314,7 +312,7 @@
             margin-bottom: 25px;
         }
         .summary-table {
-            width: 320px;
+            width: 340px;
         }
         .summary-row {
             display: flex;
@@ -383,115 +381,46 @@
             margin-bottom: 6px;
         }
 
-        /* =========================================================
-           📱 全面響應式設計 (RWD Media Query) - 控制面板 & 預覽區
-           ========================================================= */
+        /* RWD 響應式 */
         @media screen and (max-width: 900px) {
-            body {
-                flex-direction: column;
-            }
-            
-            /* 1. 左側控制面板 RWD */
+            body { flex-direction: column; }
             .controls-pane {
                 width: 100%;
                 height: auto;
                 position: relative;
-                left: auto;
-                top: auto;
                 border-right: none;
                 border-bottom: 3px solid var(--border-color);
                 box-shadow: none;
                 padding: 15px;
             }
-
-            /* 2. 右側預覽區外層 RWD */
             .preview-pane {
                 margin-left: 0;
                 width: 100%;
                 padding: 15px 10px;
                 overflow-x: hidden;
-                align-items: center;
             }
-            .action-bar {
-                width: 100%;
-                justify-content: center;
-                margin-bottom: 12px;
-            }
-
-            /* 3. 報價單預覽卡片 RWD (自適應手機螢幕) */
+            .action-bar { width: 100%; justify-content: center; }
             .invoice-card {
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
                 min-height: auto;
                 padding: 18px 12px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             }
-
-            /* 4. 報價單標頭 RWD */
-            .inv-header {
-                flex-direction: column;
-                gap: 12px;
-            }
-            .inv-title-area {
-                text-align: left;
-            }
-            .inv-title-area h1 {
-                font-size: 1.5rem;
-            }
-
-            /* 5. 客戶資料與 QR Code 區塊 RWD */
-            .parties-and-qr-container {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .qr-codes-area {
-                align-items: flex-start;
-                margin-left: 0;
-                width: 100%;
-            }
-            .qr-images {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .qr-images img {
-                height: 55px; /* 手機適度縮小 QR Code */
-            }
-
-            /* 6. 表格 RWD 最佳化 */
-            .inv-table th, .inv-table td {
-                padding: 6px 4px;
-                font-size: 0.8rem;
-            }
-
-            /* 7. 結算總計區塊 RWD */
-            .summary-table {
-                width: 100%;
-            }
-
-            /* 8. 注意事項 RWD */
-            .notice-body {
-                font-size: 0.8rem;
-            }
+            .inv-header { flex-direction: column; gap: 12px; }
+            .inv-title-area { text-align: left; }
+            .parties-and-qr-container { flex-direction: column; gap: 15px; }
+            .qr-codes-area { align-items: flex-start; margin-left: 0; width: 100%; }
+            .qr-images img { height: 55px; }
+            .inv-table th, .inv-table td { padding: 6px 4px; font-size: 0.8rem; }
+            .summary-table { width: 100%; }
         }
 
-        /* =========================================================
-           🖨️ PDF 列印與輸出 (強制維持標準 A4 格式)
-           ========================================================= */
+        /* 列印 A4 */
         @media print {
-            body { 
-                background: none; 
-                display: block; 
-            }
-            .controls-pane, .action-bar { 
-                display: none !important; 
-            }
-            .preview-pane { 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                width: 100% !important; 
-                overflow: visible !important; 
-            }
+            body { background: none; display: block; }
+            .controls-pane, .action-bar { display: none !important; }
+            .preview-pane { margin: 0 !important; padding: 0 !important; width: 100% !important; }
             .invoice-card { 
                 box-shadow: none !important; 
                 width: 210mm !important; 
@@ -500,25 +429,12 @@
                 padding: 15mm 20mm !important; 
                 margin: 0 auto !important;
             }
-            .inv-header { 
-                flex-direction: row !important; 
-            }
-            .inv-title-area { 
-                text-align: right !important; 
-            }
-            .parties-and-qr-container { 
-                flex-direction: row !important; 
-            }
-            .qr-codes-area { 
-                align-items: flex-end !important; 
-                margin-left: 15px !important; 
-            }
-            .qr-images img { 
-                height: 75px !important; 
-            }
-            .summary-table { 
-                width: 320px !important; 
-            }
+            .inv-header { flex-direction: row !important; }
+            .inv-title-area { text-align: right !important; }
+            .parties-and-qr-container { flex-direction: row !important; }
+            .qr-codes-area { align-items: flex-end !important; margin-left: 15px !important; }
+            .qr-images img { height: 75px !important; }
+            .summary-table { width: 340px !important; }
         }
     </style>
 </head>
@@ -526,18 +442,26 @@
 
     <!-- Left Controls Pane -->
     <div class="controls-pane">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="font-size: 0.9rem; font-weight: bold;">🌐 系統語系 / Language</label>
+            <select id="inp-lang" onchange="switchLanguage(this.value)" style="font-weight: bold; background: #eef2f5;">
+                <option value="zh" selected>繁體中文 (Chinese)</option>
+                <option value="en">English (英文)</option>
+            </select>
+        </div>
+
         <h2>
-            報價單設定
+            <span id="txt-sec-settings">報價單設定</span>
             <button class="btn btn-small" onclick="fetchExchangeRates()" id="btn-update-rates">更新匯率</button>
         </h2>
         
         <div class="form-row">
             <div class="form-group">
-                <label>單號 (Invoice #)</label>
+                <label id="txt-lbl-invno">單號 (Invoice #)</label>
                 <input type="text" id="inp-inv-no" oninput="updateInvoice()">
             </div>
             <div class="form-group">
-                <label>主要貨幣 (基礎定價)</label>
+                <label id="txt-lbl-basecurr">主要貨幣 (基礎定價)</label>
                 <select id="inp-base-currency" onchange="updateInvoice()">
                     <option value="MOP" selected>MOP (澳門元)</option>
                     <option value="HKD">HKD (港幣)</option>
@@ -546,7 +470,7 @@
         </div>
 
         <div class="form-group">
-            <label>報價單顯示貨幣</label>
+            <label id="txt-lbl-dispcurr">報價單顯示貨幣</label>
             <select id="inp-display-currency" onchange="updateInvoice()">
                 <option value="MOP" selected>MOP (澳門元)</option>
                 <option value="HKD">HKD (港幣)</option>
@@ -554,63 +478,63 @@
             </select>
             
             <div class="checkbox-group">
-                <span class="rate-display" id="rate-info-text">正在載入匯率...</span>
+                <span class="rate-display" id="rate-info-text">顯示幣別：MOP</span>
                 <label class="checkbox-label">
-                    <input type="checkbox" id="chk-show-rmb" onchange="updateInvoice()"> 顯示付 RMB
+                    <input type="checkbox" id="chk-show-rmb" onchange="updateInvoice()"> <span id="txt-chk-rmb">顯示付 RMB</span>
                 </label>
                 <label class="checkbox-label">
-                    <input type="checkbox" id="chk-show-hkd" onchange="updateInvoice()"> 顯示付 HKD
+                    <input type="checkbox" id="chk-show-hkd" onchange="updateInvoice()"> <span id="txt-chk-hkd">顯示付 HKD</span>
                 </label>
             </div>
         </div>
 
         <div class="form-group">
-            <label>報價日期 (Date)</label>
+            <label id="txt-lbl-date">報價日期 (Date)</label>
             <input type="date" id="inp-date" onchange="updateInvoice()">
         </div>
 
-        <h2>公司資料 (好姐二手雜貨)</h2>
+        <h2><span id="txt-sec-company">公司資料 (好姐二手雜貨)</span></h2>
         <div class="form-group">
-            <label>公司名稱</label>
+            <label id="txt-lbl-compname">公司名稱</label>
             <input type="text" id="inp-company-name" value="好姐二手雜貨" oninput="updateInvoice()">
         </div>
         <div class="form-group">
-            <label>詳細地址與聯絡方式</label>
+            <label id="txt-lbl-compdetail">詳細地址與聯絡方式</label>
             <textarea id="inp-company-details" rows="3" oninput="updateInvoice()">地址：大纜巷 47 - 47A 地鋪
 Address : Travessa da Corda 47 -47A
 電話：+853 1234 5678</textarea>
         </div>
 
-        <h2>客戶聯絡資料</h2>
+        <h2><span id="txt-sec-client">客戶聯絡資料</span></h2>
         <div class="form-group">
-            <label>客戶姓名 / 稱呼</label>
-            <input type="text" id="inp-client-name" value="姓名: " placeholder="例如：姓名: 張先生 / 陳小姐" oninput="updateInvoice()">
+            <label id="txt-lbl-clientname">客戶姓名 / 稱呼</label>
+            <input type="text" id="inp-client-name" value="姓名: " oninput="updateInvoice()">
         </div>
         <div class="form-group">
-            <label>電話</label>
-            <input type="text" id="inp-client-phone" value="電話: " placeholder="例如：電話: +853 8765 4321" oninput="updateInvoice()">
+            <label id="txt-lbl-clientphone">電話</label>
+            <input type="text" id="inp-client-phone" value="電話: " oninput="updateInvoice()">
         </div>
         <div class="form-group">
-            <label>送貨地址</label>
-            <textarea id="inp-client-address" rows="2" placeholder="例如：送貨地址: 路環..." oninput="updateInvoice()">送貨地址: </textarea>
+            <label id="txt-lbl-clientaddr">送貨地址</label>
+            <textarea id="inp-client-address" rows="2" oninput="updateInvoice()">送貨地址: </textarea>
         </div>
 
-        <h2>項目清單 <span style="font-size: 0.8rem; font-weight: normal;">(請以主要貨幣輸入價格)</span></h2>
+        <h2><span id="txt-sec-items">項目清單</span></h2>
         <div id="items-container">
             <!-- Items rendered dynamically -->
         </div>
-        <button class="btn btn-secondary" onclick="addItem()">+ 新增項目</button>
+        <button class="btn btn-secondary" onclick="addItem()" id="btn-add-item">+ 新增項目</button>
     </div>
 
     <!-- Right Preview & Print Pane -->
     <div class="preview-pane">
         <div class="action-bar">
             <label class="btn btn-small" style="background-color: #6c757d; cursor: pointer; padding: 8px 12px; margin: 0; display: inline-flex; align-items: center;">
-                📂 匯入檔案
+                📂 <span id="btn-import-txt">匯入檔案</span>
                 <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
             </label>
-            <button class="btn btn-small" style="background-color: #6c757d; padding: 8px 12px; width: auto; margin: 0;" onclick="exportData()">💾 匯出檔案</button>
-            <button class="btn" style="width: auto; margin: 0;" onclick="window.print()">🖨️ 列印 / 儲存為 PDF</button>
+            <button class="btn btn-small" style="background-color: #6c757d; padding: 8px 12px; width: auto; margin: 0;" onclick="exportData()">💾 <span id="btn-export-txt">匯出檔案</span></button>
+            <button class="btn" style="width: auto; margin: 0;" onclick="window.print()">🖨️ <span id="btn-print-txt">列印 / 儲存為 PDF</span></button>
         </div>
 
         <div class="invoice-card" id="invoice-preview">
@@ -623,22 +547,22 @@ Address : Travessa da Corda 47 -47A
 電話：+853 1234 5678</p>
                     </div>
                     <div class="inv-title-area">
-                        <h1>報價單</h1>
+                        <h1 id="prev-inv-header-title">報價單</h1>
                         <p id="prev-inv-no"># 20260731</p>
-                        <p>日期：<span id="prev-date">2026-07-31</span></p>
+                        <p><span id="prev-date-label">日期</span>：<span id="prev-date">2026-07-31</span></p>
                     </div>
                 </div>
 
                 <div class="parties-and-qr-container">
                     <div class="inv-parties">
-                        <h3>客戶資料</h3>
+                        <h3 id="prev-client-header">客戶資料</h3>
                         <p id="prev-client-line1">姓名: </p>
                         <p id="prev-client-line2">電話: </p>
                         <p id="prev-client-line3">送貨地址: </p>
                     </div>
                     
                     <div class="qr-codes-area">
-                        <div class="qr-title">付款方式</div>
+                        <div class="qr-title" id="prev-payment-title">付款方式</div>
                         <div class="qr-images">
                             <img src="payment Qrcode-01.jpg" alt="Mpay">
                             <img src="payment Qrcode-02.jpg" alt="BOC">
@@ -651,10 +575,10 @@ Address : Travessa da Corda 47 -47A
                 <table class="inv-table">
                     <thead>
                         <tr>
-                            <th style="width: 45%;">項目說明</th>
-                            <th style="width: 15%;" class="numeric">數量 (Qty)</th>
-                            <th style="width: 20%;" class="numeric">單價 (Price)</th>
-                            <th style="width: 20%;" class="numeric">金額 (Amount)</th>
+                            <th style="width: 45%;" id="th-desc">項目說明</th>
+                            <th style="width: 15%;" class="numeric" id="th-qty">數量 (Qty)</th>
+                            <th style="width: 20%;" class="numeric" id="th-price">單價 (Price)</th>
+                            <th style="width: 20%;" class="numeric" id="th-amount">金額 (Amount)</th>
                         </tr>
                     </thead>
                     <tbody id="prev-items-body">
@@ -665,25 +589,25 @@ Address : Travessa da Corda 47 -47A
                 <div class="inv-summary">
                     <div class="summary-table">
                         <div class="summary-row">
-                            <span>小計 (Subtotal):</span>
+                            <span id="lbl-subtotal">小計 (Subtotal):</span>
                             <span id="prev-subtotal">MOP 0.00</span>
                         </div>
                         <div class="summary-row total">
-                            <span>總計 (Total):</span>
+                            <span id="lbl-total">總計 (Total):</span>
                             <span id="prev-total">MOP 0.00</span>
                         </div>
                         
                         <div class="summary-row converted" id="prev-converted-total" style="display: none;">
-                            <span>主要貨幣總計:</span>
+                            <span id="lbl-converted">主要貨幣總計:</span>
                             <span id="prev-converted-amount"></span>
                         </div>
                         
                         <div class="summary-row extra-total" id="prev-extra-rmb" style="display: none;">
-                            <span>折算人民幣總計:</span>
+                            <span id="lbl-extra-rmb">折算人民幣總計:</span>
                             <span id="prev-extra-rmb-amount">RMB 0.00</span>
                         </div>
                         <div class="summary-row extra-total" id="prev-extra-hkd" style="display: none;">
-                            <span>折算港幣總計:</span>
+                            <span id="lbl-extra-hkd">折算港幣總計:</span>
                             <span id="prev-extra-hkd-amount">HKD 0.00</span>
                         </div>
 
@@ -695,34 +619,201 @@ Address : Travessa da Corda 47 -47A
             </div>
 
             <div class="notice-section">
-                <div class="notice-header">訂單與送貨重要條款</div>
-                <div class="notice-subheader">感謝惠顧！為確保送貨順利，請在下單後細閱以下條款：</div>
-                <div class="notice-body">
-                    <div class="notice-item">1. <strong>物業進出限制：</strong> 如因大廈管理處拒絕車輛進入、停車場限高或車輛無法駛入而導致未能完成送貨，恕不接受退貨或退款。</div>
-                    <div class="notice-item">2. <strong>租務條款限制：</strong> 如因房地產租賃限制或個人租約條款而導致無法接收貨品，恕不接受退貨或退款。</div>
-                    <div class="notice-item">3. <strong>無人收貨：</strong> 貨品將按約定時間送達。如送貨時現場無人接收，恕不接受退貨或退款。</div>
-                    <div class="notice-item">4. <strong>物流與人工費用：</strong> 訂單中的床架或家電之送貨及搬運費，一旦安排送貨後概不退還。</div>
-                    <div class="notice-item">5. <strong>售出不退：</strong> 貨品一經售出或安排發貨，恕不接受任何退貨或退款要求。</div>
+                <div class="notice-header" id="txt-notice-header">訂單與送貨重要條款</div>
+                <div class="notice-subheader" id="txt-notice-subheader">感謝惠顧！為確保送貨順利，請在下單後細閱以下條款：</div>
+                <div class="notice-body" id="txt-notice-body">
+                    <!-- Dynamic terms -->
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // 多語系字典 (i18n Dictionary)
+        const i18n = {
+            zh: {
+                secSettings: "報價單設定",
+                btnUpdateRates: "更新匯率",
+                lblInvNo: "單號 (Invoice #)",
+                lblBaseCurr: "主要貨幣 (基礎定價)",
+                lblDispCurr: "報價單顯示貨幣",
+                chkRMB: "顯示付 RMB",
+                chkHKD: "顯示付 HKD",
+                lblDate: "報價日期 (Date)",
+                secCompany: "公司資料 (好姐二手雜貨)",
+                lblCompName: "公司名稱",
+                lblCompDetail: "詳細地址與聯絡方式",
+                secClient: "客戶聯絡資料",
+                lblClientName: "客戶姓名 / 稱呼",
+                lblClientPhone: "電話",
+                lblClientAddr: "送貨地址",
+                secItems: "項目清單",
+                btnAddItem: "+ 新增項目",
+                btnImport: "匯入檔案",
+                btnExport: "匯出檔案",
+                btnPrint: "列印 / 儲存為 PDF",
+                
+                // 預覽區
+                invHeaderTitle: "報價單",
+                dateLabel: "日期",
+                clientHeader: "客戶資料",
+                paymentTitle: "付款方式",
+                thDesc: "項目說明",
+                thQty: "數量 (Qty)",
+                thPrice: "單價 (Price)",
+                thAmount: "金額 (Amount)",
+                lblSubtotal: "小計 (Subtotal):",
+                lblTotal: "總計 (Total):",
+                lblConverted: "主要貨幣總計:",
+                lblExtraRMB: "折算人民幣總計:",
+                lblExtraHKD: "折算港幣總計:",
+                rateNote: "*根據即時匯率計算",
+                
+                // 預設欄位 Value 範例
+                clientNameDefault: "姓名: ",
+                clientPhoneDefault: "電話: ",
+                clientAddrDefault: "送貨地址: ",
+                
+                // 條款內容
+                noticeHeader: "訂單與送貨重要條款",
+                noticeSubheader: "感謝惠顧！為確保送貨順利，請在下單後細閱以下條款：",
+                noticeTerms: [
+                    "1. <strong>物業進出限制：</strong> 如因大廈管理處拒絕車輛進入、停車場限高或車輛無法駛入而導致未能完成送貨，恕不接受退貨或退款。",
+                    "2. <strong>租務條款限制：</strong> 如因房地產租賃限制或個人租約條款而導致無法接收貨品，恕不接受退貨或退款。",
+                    "3. <strong>無人收貨：</strong> 貨品將按約定時間送達。如送貨時現場無人接收，恕不接受退貨或退款。",
+                    "4. <strong>物流與人工費用：</strong> 訂單中的床架或家電之送貨及搬運費，一旦安排送貨後概不退還。",
+                    "5. <strong>售出不退：</strong> 貨品一經售出或安排發貨，恕不接受任何退貨或退款要求。"
+                ]
+            },
+            en: {
+                secSettings: "Quotation Settings",
+                btnUpdateRates: "Update Rates",
+                lblInvNo: "Invoice #",
+                lblBaseCurr: "Base Currency",
+                lblDispCurr: "Display Currency",
+                chkRMB: "Show RMB Total",
+                chkHKD: "Show HKD Total",
+                lblDate: "Date",
+                secCompany: "Company Information",
+                lblCompName: "Company Name",
+                lblCompDetail: "Address & Contact Info",
+                secClient: "Client Information",
+                lblClientName: "Client Name",
+                lblClientPhone: "Phone",
+                lblClientAddr: "Delivery Address",
+                secItems: "Line Items",
+                btnAddItem: "+ Add Line Item",
+                btnImport: "Import JSON",
+                btnExport: "Export JSON",
+                btnPrint: "Print / Save PDF",
+                
+                // 預覽區
+                invHeaderTitle: "QUOTATION",
+                dateLabel: "Date",
+                clientHeader: "Client Info",
+                paymentTitle: "Payment Methods",
+                thDesc: "Description",
+                thQty: "Qty",
+                thPrice: "Unit Price",
+                thAmount: "Amount",
+                lblSubtotal: "Subtotal:",
+                lblTotal: "Total:",
+                lblConverted: "Base Total:",
+                lblExtraRMB: "Total in RMB:",
+                lblExtraHKD: "Total in HKD:",
+                rateNote: "*Calculated based on real-time exchange rate",
+                
+                // 預設欄位 Value 範例
+                clientNameDefault: "Name: ",
+                clientPhoneDefault: "Phone: ",
+                clientAddrDefault: "Delivery Address: ",
+
+                // 條款內容
+                noticeHeader: "Terms & Conditions of Delivery",
+                noticeSubheader: "Thank you for your order! Please review our delivery policies:",
+                noticeTerms: [
+                    "1. <strong>Access Restrictions:</strong> No returns or refunds will be accepted if delivery fails due to property management entry refusal, vehicle height limits, or inaccessible entry.",
+                    "2. <strong>Tenancy Restrictions:</strong> No returns or refunds will be accepted if delivery cannot be completed due to building lease regulations or personal tenancy terms.",
+                    "3. <strong>Unattended Delivery:</strong> Items will be delivered at the agreed time slot. No returns or refunds if no recipient is present upon arrival.",
+                    "4. <strong>Logistics & Labor Fees:</strong> Delivery and handling fees for bed frames or appliances are non-refundable once scheduled.",
+                    "5. <strong>Final Sale:</strong> All items are strictly non-refundable once dispatched or delivered."
+                ]
+            }
+        };
+
+        let currentLang = 'zh';
+
         let exchangeRates = {
             MOP: { HKD: 0.97, CNY: 0.89 }, 
             HKD: { MOP: 1.03, CNY: 0.92 }
         };
-        let lastUpdateTime = "使用預設匯率";
 
         let items = [
             { desc: '', qty: 1, price: 0, type: 'normal' }
         ];
 
+        function switchLanguage(lang) {
+            currentLang = lang;
+            const t = i18n[lang];
+
+            // 調整介面標籤
+            document.getElementById('txt-sec-settings').innerText = t.secSettings;
+            document.getElementById('btn-update-rates').innerText = t.btnUpdateRates;
+            document.getElementById('txt-lbl-invno').innerText = t.lblInvNo;
+            document.getElementById('txt-lbl-basecurr').innerText = t.lblBaseCurr;
+            document.getElementById('txt-lbl-dispcurr').innerText = t.lblDispCurr;
+            document.getElementById('txt-chk-rmb').innerText = t.chkRMB;
+            document.getElementById('txt-chk-hkd').innerText = t.chkHKD;
+            document.getElementById('txt-lbl-date').innerText = t.lblDate;
+            document.getElementById('txt-sec-company').innerText = t.secCompany;
+            document.getElementById('txt-lbl-compname').innerText = t.lblCompName;
+            document.getElementById('txt-lbl-compdetail').innerText = t.lblCompDetail;
+            document.getElementById('txt-sec-client').innerText = t.secClient;
+            document.getElementById('txt-lbl-clientname').innerText = t.lblClientName;
+            document.getElementById('txt-lbl-clientphone').innerText = t.lblClientPhone;
+            document.getElementById('txt-lbl-clientaddr').innerText = t.lblClientAddr;
+            document.getElementById('txt-sec-items').innerText = t.secItems;
+            document.getElementById('btn-add-item').innerText = t.btnAddItem;
+            document.getElementById('btn-import-txt').innerText = t.btnImport;
+            document.getElementById('btn-export-txt').innerText = t.btnExport;
+            document.getElementById('btn-print-txt').innerText = t.btnPrint;
+
+            // 調整預覽卡片文字
+            document.getElementById('prev-inv-header-title').innerText = t.invHeaderTitle;
+            document.getElementById('prev-date-label').innerText = t.dateLabel;
+            document.getElementById('prev-client-header').innerText = t.clientHeader;
+            document.getElementById('prev-payment-title').innerText = t.paymentTitle;
+            document.getElementById('th-desc').innerText = t.thDesc;
+            document.getElementById('th-qty').innerText = t.thQty;
+            document.getElementById('th-price').innerText = t.thPrice;
+            document.getElementById('th-amount').innerText = t.thAmount;
+            document.getElementById('lbl-subtotal').innerText = t.lblSubtotal;
+            document.getElementById('lbl-total').innerText = t.lblTotal;
+            document.getElementById('lbl-converted').innerText = t.lblConverted;
+            document.getElementById('lbl-extra-rmb').innerText = t.lblExtraRMB;
+            document.getElementById('lbl-extra-hkd').innerText = t.lblExtraHKD;
+            document.getElementById('prev-rate-note').innerText = t.rateNote;
+
+            // 調整條款
+            document.getElementById('txt-notice-header').innerText = t.noticeHeader;
+            document.getElementById('txt-notice-subheader').innerText = t.noticeSubheader;
+            const noticeContainer = document.getElementById('txt-notice-body');
+            noticeContainer.innerHTML = '';
+            t.noticeTerms.forEach(itemStr => {
+                let div = document.createElement('div');
+                div.className = 'notice-item';
+                div.innerHTML = itemStr;
+                noticeContainer.appendChild(div);
+            });
+
+            initItemsEditor();
+            updateInvoice();
+        }
+
         async function fetchExchangeRates() {
             const btn = document.getElementById('btn-update-rates');
             const infoText = document.getElementById('rate-info-text');
-            btn.innerText = '更新中...';
+            btn.innerText = currentLang === 'zh' ? '更新中...' : 'Updating...';
             btn.disabled = true;
 
             try {
@@ -739,15 +830,11 @@ Address : Travessa da Corda 47 -47A
                         exchangeRates.HKD.MOP = dataHKD.rates.MOP;
                         exchangeRates.HKD.CNY = dataHKD.rates.CNY;
                     }
-
-                    const now = new Date();
-                    lastUpdateTime = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
                 }
             } catch (error) {
                 console.error("Exchange rate error:", error);
-                infoText.innerText = '目前顯示：';
             } finally {
-                btn.innerText = '更新匯率';
+                btn.innerText = i18n[currentLang].btnUpdateRates;
                 btn.disabled = false;
                 updateInvoice(); 
             }
@@ -771,38 +858,37 @@ Address : Travessa da Corda 47 -47A
 
                 div.innerHTML = `
                     <div class="action-buttons">
-                        ${index > 0 ? `<button class="btn-icon" onclick="moveItem(${index}, -1)" title="上移">⬆</button>` : ''}
-                        ${index < items.length - 1 ? `<button class="btn-icon" onclick="moveItem(${index}, 1)" title="下移">⬇</button>` : ''}
-                        ${items.length > 1 ? `<button class="btn-icon delete" onclick="removeItem(${index})">刪除</button>` : ''}
+                        ${index > 0 ? `<button class="btn-icon" onclick="moveItem(${index}, -1)">⬆</button>` : ''}
+                        ${index < items.length - 1 ? `<button class="btn-icon" onclick="moveItem(${index}, 1)">⬇</button>` : ''}
+                        ${items.length > 1 ? `<button class="btn-icon delete" onclick="removeItem(${index})">${currentLang==='zh'?'刪除':'Delete'}</button>` : ''}
                     </div>
                     <div class="form-group" style="margin-bottom: 6px;">
-                        <label>項目說明</label>
-                        <input type="text" value="${item.desc}" placeholder="輸入商品或服務說明" oninput="updateItem(${index}, 'desc', this.value)">
+                        <label>${i18n[currentLang].thDesc}</label>
+                        <input type="text" value="${item.desc}" placeholder="${currentLang==='zh'?'輸入商品或服務說明':'Description'}" oninput="updateItem(${index}, 'desc', this.value)">
                     </div>
                     ${isDelivery ? `
                     <div class="form-group" style="margin-bottom: 6px;">
-                        <label>選擇送貨地區</label>
+                        <label>${currentLang==='zh'?'選擇送貨地區':'Delivery Area'}</label>
                         <select onchange="updateDeliveryLocation(${index}, this.value)">
-                            <option value="Macau Peninsula" ${item.location === 'Macau Peninsula' ? 'selected' : ''}>澳門半島 (MOP$120)</option>
-                            <option value="Taipa" ${item.location === 'Taipa' ? 'selected' : ''}>氹仔 (MOP$190)</option>
-                            <option value="Coloane" ${item.location === 'Coloane' ? 'selected' : ''}>路環 (MOP$250)</option>
+                            <option value="Macau Peninsula" ${item.location === 'Macau Peninsula' ? 'selected' : ''}>${currentLang==='zh'?'澳門半島 (MOP$120)':'Macau Peninsula (MOP$120)'}</option>
+                            <option value="Taipa" ${item.location === 'Taipa' ? 'selected' : ''}>${currentLang==='zh'?'氹仔 (MOP$190)':'Taipa (MOP$190)'}</option>
+                            <option value="Coloane" ${item.location === 'Coloane' ? 'selected' : ''}>${currentLang==='zh'?'路環 (MOP$250)':'Coloane (MOP$250)'}</option>
                         </select>
                     </div>
                     ` : ''}
                     <div class="form-row">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label>數量</label>
+                            <label>${i18n[currentLang].thQty}</label>
                             <input type="number" value="${item.qty}" min="1" oninput="updateItem(${index}, 'qty', parseFloat(this.value) || 0)">
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label>單價 (${baseCurrency})</label>
+                            <label>${i18n[currentLang].thPrice} (${baseCurrency})</label>
                             <input type="number" value="${item.price}" min="0" step="1" ${isDelivery ? 'readonly style="background-color:#e9ecef;"' : ''} oninput="updateItem(${index}, 'price', parseFloat(this.value) || 0)">
                         </div>
                     </div>
                 `;
                 container.appendChild(div);
             });
-            updateInvoice();
         }
 
         function moveItem(index, direction) {
@@ -811,32 +897,37 @@ Address : Travessa da Corda 47 -47A
                 items[index] = items[index + direction];
                 items[index + direction] = temp;
                 initItemsEditor();
+                updateInvoice();
             }
         }
 
         function updateDeliveryLocation(index, location) {
             items[index].location = location;
+            const isZh = currentLang === 'zh';
             if (location === 'Macau Peninsula') {
                 items[index].price = 120;
-                items[index].desc = '送貨服務 (澳門半島)';
+                items[index].desc = isZh ? '送貨服務 (澳門半島)' : 'Delivery Service (Macau Peninsula)';
             } else if (location === 'Taipa') {
                 items[index].price = 190;
-                items[index].desc = '送貨服務 (氹仔)';
+                items[index].desc = isZh ? '送貨服務 (氹仔)' : 'Delivery Service (Taipa)';
             } else if (location === 'Coloane') {
                 items[index].price = 250;
-                items[index].desc = '送貨服務 (路環)';
+                items[index].desc = isZh ? '送貨服務 (路環)' : 'Delivery Service (Coloane)';
             }
             initItemsEditor();
+            updateInvoice();
         }
 
         function addItem() {
             items.push({ desc: '', qty: 1, price: 0, type: 'normal' });
             initItemsEditor();
+            updateInvoice();
         }
 
         function removeItem(index) {
             items.splice(index, 1);
             initItemsEditor();
+            updateInvoice();
         }
 
         function updateItem(index, field, value) {
@@ -859,13 +950,7 @@ Address : Travessa da Corda 47 -47A
             const showHKD = document.getElementById('chk-show-hkd').checked;
 
             const rate = getRate(baseCurrency, displayCurrency);
-            document.getElementById('rate-info-text').innerText = `顯示幣別：${displayCurrency}`;
-
-            const currentItemLabels = document.querySelector('#items-container .form-group label:last-child');
-            if(currentItemLabels && !currentItemLabels.innerText.includes(baseCurrency)) {
-                 initItemsEditor(); 
-                 return; 
-            }
+            document.getElementById('rate-info-text').innerText = `${currentLang==='zh'?'顯示幣別':'Display'}: ${displayCurrency}`;
 
             document.getElementById('prev-inv-no').innerText = '# ' + invNo;
             document.getElementById('prev-date').innerText = date;
@@ -941,6 +1026,7 @@ Address : Travessa da Corda 47 -47A
 
         function exportData() {
             const data = {
+                lang: currentLang,
                 invNo: document.getElementById('inp-inv-no').value,
                 baseCurrency: document.getElementById('inp-base-currency').value,
                 displayCurrency: document.getElementById('inp-display-currency').value,
@@ -981,6 +1067,10 @@ Address : Travessa da Corda 47 -47A
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
+                    if (data.lang !== undefined) {
+                        document.getElementById('inp-lang').value = data.lang;
+                        currentLang = data.lang;
+                    }
                     if (data.invNo !== undefined) document.getElementById('inp-inv-no').value = data.invNo;
                     if (data.baseCurrency !== undefined) document.getElementById('inp-base-currency').value = data.baseCurrency;
                     if (data.displayCurrency !== undefined) document.getElementById('inp-display-currency').value = data.displayCurrency;
@@ -996,11 +1086,10 @@ Address : Travessa da Corda 47 -47A
                     if (Array.isArray(data.items)) {
                         items = data.items;
                     }
-                    initItemsEditor();
-                    updateInvoice();
-                    alert("✅ 報價單資料成功載入！");
+                    switchLanguage(currentLang);
+                    alert(currentLang === 'zh' ? "✅ 報價單資料成功載入！" : "✅ Data imported successfully!");
                 } catch (err) {
-                    alert("❌ 載入失敗，檔案格式不正確或不是報價單檔案。");
+                    alert(currentLang === 'zh' ? "❌ 載入失敗，檔案格式不正確。" : "❌ Import failed. Invalid file format.");
                 }
                 event.target.value = '';
             };
@@ -1016,9 +1105,8 @@ Address : Travessa da Corda 47 -47A
             document.getElementById('inp-inv-no').value = `${yyyy}${mm}${dd}`;
             document.getElementById('inp-date').value = `${yyyy}-${mm}-${dd}`;
 
-            fetchExchangeRates().then(() => {
-                initItemsEditor();
-            });
+            switchLanguage('zh');
+            fetchExchangeRates();
         };
     </script>
 </body>
